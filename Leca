@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecapife.com</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body { background: linear-gradient(to bottom, #064e3b, #065f46, #064e3b); color: white; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    h2 { text-align: center; color: #facc15; font-size: 2rem; margin-top: 40px; }
+    .categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+    .card { background: #065f46; border: 1px solid #facc15; border-radius: 10px; padding: 16px; cursor: pointer; }
+    .card h3 { color: white; display: flex; align-items: center; gap: 8px; }
+    .item { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; padding: 6px; background: #047857; border: 1px solid #facc15; border-radius: 6px; }
+    .item span { background: white; color: black; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    .btn { background: #facc15; color: black; font-weight: bold; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #fde047; }
+    .cart { background: #065f46; border: 1px solid #facc15; border-radius: 10px; padding: 16px; max-width: 800px; margin: 20px auto; }
+    .cart h3 { color: #facc15; font-size: 1.5rem; margin-bottom: 10px; }
+    input { width: 100%; padding: 8px; margin: 6px 0; border-radius: 6px; border: 1px solid #facc15; background: #047857; color: white; }
+    .footer { text-align: center; margin: 30px 0; }
+    .footer span { color: #facc15; }
+  </style>
+</head>
+<body>
+
+  <h2>Our Product and Service Categories</h2>
+  <div class="categories">
+    <div class="card">
+      <h3>Welding Rods & Spooling Wire</h3>
+      <div class="item"><span>7014 3/32</span><span>$30.00</span><button class="btn">Add</button></div>
+      <div class="item"><span>Spooling Wire</span><span>$90.00</span><button class="btn">Add</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Paint & Paint Brushes</h3>
+      <div class="item"><span>PRIMER</span><span>$40.00</span><button class="btn">Add</button></div>
+      <div class="item"><span>Paint Brush 2"</span><span>$1.25</span><button class="btn">Add</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Cutting Wheels</h3>
+      <div class="item"><span>4” Cutting Wheel</span><span>$2.00</span><button class="btn">Add</button></div>
+      <div class="item"><span>7” Cutting Wheel</span><span>$3.00</span><button class="btn">Add</button></div>
+    </div>
+
+    <div class="card">
+      <h3>Steel Steps</h3>
+      <a href="tel:17183423305" style="color:#facc15;font-weight:bold;text-decoration:underline">Email: Lecapife@gmail.com | Call Lecapife Office at (718) 342-3305 for a quote</a>
+    </div>
+  </div>
+
+  <div class="cart">
+    <h3>Your Cart</h3>
+    <div id="cart-items"></div>
+    <p id="subtotal">Subtotal: $0.00</p>
+    <p id="tax">Tax: $0.00</p>
+    <p id="total">Total: $0.00</p>
+
+    <input type="text" id="customer-name" placeholder="Your Name">
+    <input type="tel" id="customer-phone" placeholder="Phone Number">
+    <button class="btn" id="checkout">Checkout with Stripe</button>
+  </div>
+
+  <div class="footer">
+    <p>Email: <span>Lecapife@gmail.com</span></p>
+    <p>Call Lecapife Office at <span>(718) 342-3305</span></p>
+  </div>
+
+  <script>
+    let cart = [];
+    const taxRate = 0.08875;
+
+    function updateCart() {
+      let subtotal = cart.reduce((s, item) => s + item.price, 0);
+      let tax = subtotal * taxRate;
+      let total = subtotal + tax;
+
+      document.getElementById("cart-items").innerHTML = cart.map((item, idx) => `<div>${item.name} - $${item.price.toFixed(2)} <button onclick="removeItem(${idx})">Remove One</button></div>`).join("");
+      document.getElementById("subtotal").innerText = `Subtotal: $${subtotal.toFixed(2)}`;
+      document.getElementById("tax").innerText = `Tax: $${tax.toFixed(2)}`;
+      document.getElementById("total").innerText = `Total: $${total.toFixed(2)}`;
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    document.querySelectorAll(".item .btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const parent = e.target.parentElement;
+        const name = parent.querySelector("span").innerText;
+        const price = parseFloat(parent.querySelectorAll("span")[1].innerText.replace("$", ""));
+        cart.push({ name, price });
+        updateCart();
+      });
+    });
+
+    document.getElementById("checkout").addEventListener("click", async () => {
+      if(cart.length === 0){ alert("Cart is empty"); return; }
+      alert("Stripe checkout integration needed here.");
+    });
+  </script>
+
+</body>
+</html>
